@@ -9,6 +9,8 @@ const int height=20;
 const int width=30;
 
 int x,y,fruitX,fruitY;
+int ntail;
+int tailX[100],tailY[100];
 int score=0;
 
 
@@ -48,8 +50,17 @@ void draw(){
             else if(i==fruitY && j==fruitX){
                 cout<<"*";
             }
-            else{
+            else  {
+
+                bool print=false;
+                for(int k=0;k<ntail;k++){
+                    if(i==tailX[k] && j==tailY[k]){
+                    cout<<"o";
+                    print=true;
+                    }
+                }if(!print){
                 cout<<" ";
+            }
             }
             }
         cout<<endl;
@@ -89,6 +100,21 @@ void input(){
 
 
 void logic(){
+
+    int prevX=tailX[0];
+    int prevY=tailY[0];
+    tailX[0]=y;
+    tailY[0]=x;
+    int prev2X,prev2Y;
+
+    for(int i=1;i<ntail;i++){
+        prev2X=tailX[i];
+        prev2Y=tailY[i];
+        tailX[i]=prevX;
+        tailY[i]=prevY;
+        prevX=prev2X;
+        prevY=prev2Y;
+    }
     switch(dir){
         case UP :
             y--;
@@ -105,12 +131,19 @@ void logic(){
         default :
             break;
     }
-    if(x<0 || y<0 || x>=width-1 || y>=height-1){
+    if(x<0 || y<0 || x>=width-1 || y>=height){
             gameOver=true;
         }
 
+    for(int i=0;i<ntail;i++){
+        if(y==tailX[i] && x==tailY[i]){
+            gameOver=true;
+        }
+    }
+
     if(x==fruitX && y==fruitY){
             score++;
+            ntail++;
             fruitX= 1 + rand() % (width-2);
             fruitY= 1 + rand() % (height-2);
         }
